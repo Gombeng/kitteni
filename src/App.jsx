@@ -9,6 +9,7 @@ function App() {
 	const cat_url = 'https://api.thecatapi.com/v1/breeds';
 	const [cats, setCats] = useState([]);
 	const [q, setQ] = useState('');
+	const [loading, setLoading] = useState(true);
 
 	const config = {
 		headers: {
@@ -21,6 +22,7 @@ function App() {
 		const getAllCats = async () => {
 			const { data } = await axios.get(cat_url, config);
 			setCats(data);
+			setLoading(false);
 		};
 		getAllCats();
 	}, []);
@@ -40,15 +42,13 @@ function App() {
 			<div className="card-container">
 				{cats
 					?.filter((cat) => {
-						if (q === '') {
-							return cat;
-						} else if (cat.name.toLowerCase().includes(q.toLowerCase())) {
-							return cat;
-						}
+						if (q === '') return cat;
+						if (cat.name.toLowerCase().includes(q.toLowerCase())) return cat;
 					})
 					?.map((cat) => (
 						<Accordion key={cat?.id} {...cat} />
 					))}
+				{loading && <p>Loading...</p>}
 			</div>
 		</Container>
 	);
