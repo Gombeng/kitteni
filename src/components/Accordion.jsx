@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const Accordion = ({ image, name, description }) => {
+const Accordion = ({
+	image,
+	name,
+	description,
+	temperament,
+	wikipedia_url,
+}) => {
+	const parentRef = useRef();
 	const [expanded, setExpanded] = useState(false);
 
 	return (
@@ -19,12 +26,26 @@ const Accordion = ({ image, name, description }) => {
 						</button>
 					</div>
 
-					{expanded && (
-						<div className="expand">
-							<strong>Description</strong>
-							<p>{description}</p>
-						</div>
-					)}
+					<div
+						className="expand"
+						ref={parentRef}
+						style={
+							expanded
+								? { height: parentRef.current.scrollHeight + 'px' }
+								: null
+						}
+					>
+						<strong>Description</strong>
+						<p>{description}</p>
+
+						<strong>Temperament</strong>
+						<p>{temperament}</p>
+
+						<strong>More Info</strong>
+						<a href={wikipedia_url} target="_blank">
+							Wikipedia: {name}
+						</a>
+					</div>
 				</div>
 			</div>
 		</Container>
@@ -35,6 +56,7 @@ export default Accordion;
 
 const Container = styled.div`
 	margin: 1rem auto;
+
 	.card {
 		border-radius: 0.3rem;
 		overflow: hidden;
@@ -57,26 +79,34 @@ const Container = styled.div`
 				align-items: center;
 			}
 
+			h3 {
+				cursor: pointer;
+			}
+
 			button {
 				all: unset;
 				display: grid;
 				place-items: center;
-				cursor: pointer;
+				color: white;
 				width: 2rem;
 				height: 2rem;
 				border-radius: 50%;
-				color: white;
-				background-color: #b88384;
 				font-size: 1.5rem;
 				font-weight: bold;
+				cursor: pointer;
+				background-color: #b88384;
+				box-shadow: 1px 1px 10px rgba(184, 131, 132, 0.5);
 			}
 
 			.expand {
-				margin-top: 1rem;
+				height: 0;
+				overflow: hidden;
+				transition: height ease 0.3s;
 
 				strong {
 					display: block;
-					margin-bottom: 0.8rem;
+					margin-top: 1.5rem;
+					margin-bottom: 0.5rem;
 				}
 			}
 		}

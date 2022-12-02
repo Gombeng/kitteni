@@ -3,14 +3,17 @@ import reactLogo from './assets/react.svg';
 import axios from 'axios';
 import styled from 'styled-components';
 import Accordion from './components/Accordion';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 function App() {
 	const [count, setCount] = useState(0);
 	const cat_url = 'https://api.thecatapi.com/v1/breeds';
+	// const [cats, setCats] = useState([]);
 	const [cats, setCats] = useState([]);
 	const [q, setQ] = useState('');
 	const [loading, setLoading] = useState(true);
 
+	console.log(cats);
 	const config = {
 		headers: {
 			'x-api-key':
@@ -39,17 +42,28 @@ function App() {
 				/>
 			</div>
 
-			<div className="card-container">
-				{cats
-					?.filter((cat) => {
-						if (q === '') return cat;
-						if (cat.name.toLowerCase().includes(q.toLowerCase())) return cat;
-					})
-					?.map((cat) => (
-						<Accordion key={cat?.id} {...cat} />
-					))}
-				{loading && <p>Loading...</p>}
-			</div>
+			{/* <InfiniteScroll
+				className="card-container"
+				dataLength={cats.length}
+				next={fetchData}
+				hasMore={true}
+				loader={<p>Loading...</p>}
+				endMessage={
+					<p style={{ textAlign: 'center' }}>
+						<b>Yay! You have seen it all</b>
+					</p>
+				}
+			> */}
+			{cats
+				?.filter((cat) => {
+					if (q === '') return cat;
+					if (cat.name.toLowerCase().includes(q.toLowerCase())) return cat;
+				})
+				?.map((cat) => (
+					<Accordion key={cat?.id} {...cat} />
+				))}
+			{loading && <p>Loading...</p>}
+			{/* </InfiniteScroll> */}
 		</Container>
 	);
 }
