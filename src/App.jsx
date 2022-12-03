@@ -59,9 +59,9 @@ function App() {
 						if (q === '') return cat;
 						if (cat.name.toLowerCase().includes(q.toLowerCase())) return cat;
 					})
-					?.map((cat, i) => {
-						return <Accordion key={cat.id} {...cat} />;
-					})}
+					?.map((cat, i) => (
+						<Accordion key={cat.id} {...cat} />
+					))}
 			</InfiniteScroll>
 		</Container>
 	);
