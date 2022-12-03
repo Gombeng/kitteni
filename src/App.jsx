@@ -1,19 +1,13 @@
-import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import Accordion from './components/Accordion';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function App() {
-	const [count, setCount] = useState(0);
-	const cat_url = 'https://api.thecatapi.com/v1/breeds';
-	// const [cats, setCats] = useState([]);
 	const [cats, setCats] = useState([]);
 	const [q, setQ] = useState('');
-	const [loading, setLoading] = useState(true);
-
-	console.log(cats);
+	const [page, setPage] = useState(0);
 	const config = {
 		headers: {
 			'x-api-key':
@@ -23,12 +17,14 @@ function App() {
 
 	useEffect(() => {
 		const getAllCats = async () => {
-			const { data } = await axios.get(cat_url, config);
+			const { data } = await axios.get(
+				`https://api.thecatapi.com/v1/breeds?limit=10&page=${page}`,
+				config
+			);
 			setCats(data);
-			setLoading(false);
 		};
 		getAllCats();
-	}, []);
+	}, [page]);
 
 	return (
 		<Container>
@@ -42,28 +38,31 @@ function App() {
 				/>
 			</div>
 
-			{/* <InfiniteScroll
-				className="card-container"
+			<InfiniteScroll
 				dataLength={cats.length}
-				next={fetchData}
+				next={() => {
+					setPage(page + 1);
+					setCats((prev) => [...prev, ...cats]);
+				}}
 				hasMore={true}
-				loader={<p>Loading...</p>}
+				loader={
+					<p style={{ textAlign: 'center', margin: '1rem auto' }}>Loading...</p>
+				}
 				endMessage={
 					<p style={{ textAlign: 'center' }}>
 						<b>Yay! You have seen it all</b>
 					</p>
 				}
-			> */}
-			{cats
-				?.filter((cat) => {
-					if (q === '') return cat;
-					if (cat.name.toLowerCase().includes(q.toLowerCase())) return cat;
-				})
-				?.map((cat) => (
-					<Accordion key={cat?.id} {...cat} />
-				))}
-			{loading && <p>Loading...</p>}
-			{/* </InfiniteScroll> */}
+			>
+				{cats
+					?.filter((cat) => {
+						if (q === '') return cat;
+						if (cat.name.toLowerCase().includes(q.toLowerCase())) return cat;
+					})
+					?.map((cat, i) => {
+						return <Accordion key={cat.id} {...cat} />;
+					})}
+			</InfiniteScroll>
 		</Container>
 	);
 }
